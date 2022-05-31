@@ -4,7 +4,7 @@ const {dbClient, dbUser, dbPassword, dbDatabase, dbDatabaseTest} = envVariables;
 
 // Update with your config settings.
 
-export const config: { [key: string]: Knex.Config } = {
+const config: { [key: string]: Knex.Config } = {
   development: {
     client: dbClient,
     connection: {
@@ -17,10 +17,11 @@ export const config: { [key: string]: Knex.Config } = {
       max: 10
     },
     migrations: {
-      tableName: "knex_migrations"
+      tableName: "knex_migrations",
+      directory: './database/migrations',
     },
     seeds: {
-      directory: 'database/seeders'
+      directory: './database/seeders'
     }
   },
 
@@ -39,29 +40,30 @@ export const config: { [key: string]: Knex.Config } = {
       tableName: "knex_migrations"
     },
     seeds: {
-      directory: 'database/seeders'
+      directory: './database/seeders'
     }
   },
 
   production: {
-    client: "postgresql",
+    client: dbClient,
     connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
+      database: dbDatabase,
+      user: dbUser,
+      password: dbPassword
     },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: "knex_migrations"
+      tableName: "knex_migrations",
+      directory: './database/migrations',
     },
     seeds: {
-      directory: '../seeders'
+      directory: './database/seeders'
     }
   }
 
 };
 
-
+export default config;

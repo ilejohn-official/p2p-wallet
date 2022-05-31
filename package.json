@@ -7,6 +7,7 @@
     "build": "tsc --w",
     "start": "tsc && ts-node dist/index.js",
     "serve": "tsc && ts-node-dev --respawn dist/index.js",
+    "migrate:development": "knex migrate:latest --env development",
     "test": "cross-env APP_ENV=test jest --testTimeout=10000 --detectOpenHandles --forceExit"
   },
   "repository": {

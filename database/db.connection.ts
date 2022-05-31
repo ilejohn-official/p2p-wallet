@@ -1,4 +1,4 @@
-import {config} from '../knexfile';
+import config from '../knexfile';
 import envVariables from "../src/config";
 import knex from 'knex';
 
