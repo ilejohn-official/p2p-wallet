@@ -4,10 +4,32 @@ import {getErrorMessage} from "../utils";
 
 const UserController = {
 
+  /**
+   *  Retrieve all users
+   * @param {Request} request 
+   * @param  {Response} response 
+   */
+  allUsers: async (request:Request, response:Response)=> {
+    try {
+      const users = await UserService.all();
+
+      response.status(200).json({
+        status: 'success',
+        message: 'All Users retrieved successfully.',
+        data: users
+    });
+   
+    } catch (error) {
+      response.status(400).json({status: 'error', message: `Users failed to be retrieved: ${getErrorMessage(error)}`});
+    }
+  },
+
    /**
-     * Create user
-     *
-     */
+    * Create user
+    * 
+    * @param {Request} request 
+    * @param  {Response} response 
+    */
   
   create: async (request:Request, response:Response) => {
     const name = request.body.name;
@@ -24,8 +46,7 @@ const UserController = {
         data: user
       });
     } catch (error) {
-     console.log(getErrorMessage(error))
-      response.status(400).json({status: 'error', message: `${getErrorMessage(error)}. failed to create user`});
+      response.status(400).json({status: 'error', message: `failed to create user : ${getErrorMessage(error)}`});
     }
   }
   

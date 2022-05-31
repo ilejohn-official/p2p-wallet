@@ -1,10 +1,9 @@
 import db from "../../database/db.connection";
 import {hashPassword} from "../utils";
-
-interface User {
+export interface User {
     name: string,
     email: string,
-    id?: number
+    id: number
 }
 
 export class UserService {
@@ -25,8 +24,12 @@ export class UserService {
       return users[0];
     }
 
-    static async getUserByEmail(email: string) {
-        return await db(UserService.table).where('email', email).first();
+    static async getUserByEmail(email: string): Promise<User> {
+      return db(UserService.table).where('email', email).first();
+    }
+
+    static async all(): Promise<User[]> {
+      return db(UserService.table);
     }
 
 }
