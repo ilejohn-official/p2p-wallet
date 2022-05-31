@@ -1,6 +1,6 @@
 import app from "./src/app";
-
-let port = 5000;
+import envVariables from "./src/config/index";
+const {port} = envVariables;
 
 app.listen(port, () => {
   console.log(`***** \nServer running on port ${port}\n*****`);
