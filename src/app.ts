@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import apiRoutes from "../src/routes/index";
 
 const app = express();
 
@@ -7,6 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
 app.use(express.static("public"));
+app.use("/", apiRoutes);
 
 app.use((request: Request, response: Response, next: NextFunction) => {
     return response.status(404).json({
