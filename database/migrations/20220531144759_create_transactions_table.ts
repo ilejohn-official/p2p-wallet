@@ -12,6 +12,7 @@ export async function up(knex: Knex): Promise<void> {
       table.decimal('credit', 19, 2);
       table.text('narration', 'longtext');
       table.string('status').checkIn(['SUCCESS', 'FAILED', 'PENDING']);
+      table.json('meta').nullable();
       table.timestamps(true, true, true);
     });
 }

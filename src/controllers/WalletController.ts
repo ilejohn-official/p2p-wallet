@@ -53,7 +53,7 @@ const UserController = {
   },
 
    /**
-     * Fund wallet
+     * Fund wallet initiation
      * 
      * @param {CustomRequest} request 
      * @param  {Response} response 
@@ -65,7 +65,30 @@ const UserController = {
 
       try {
         const handler = new WalletService(user);
-        const wallet = await handler.fundWallet(request.body.amount);
+        const thirdPartyData = await handler.fundWallet(request.body.amount);
+  
+        response.status(302).json({
+          status: 'success',
+          message: 'Wallet funding initiated.',
+          data: thirdPartyData
+        });
+      } catch (error) {
+        response.status(400).json({status: 'error', message: `Failed to initiate wallet funding: ${getErrorMessage(error)}`});
+      }
+    },
+
+    /**
+     * Complete wallet funding
+     * @param {CustomRequest} request 
+     * @param {Response} response 
+     */
+    completeWalletFunding: async (request:CustomRequest, response:Response) => {
+      const user = request.user as User;
+      const reference = request.body.reference;
+
+      try {
+        const handler = new WalletService(user);
+        const wallet = await handler.completeWalletFunding(reference);
   
         response.status(200).json({
           status: 'success',

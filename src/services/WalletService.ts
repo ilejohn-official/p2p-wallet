@@ -1,7 +1,7 @@
 import db from "../../database/db.connection";
 import { User, UserService } from "./UserService";
 import { TransactionService } from "./TransactionService";
-import {getErrorMessage, payViaPaystack} from "../utils"
+import {getErrorMessage, payViaPaystack, verifyPaystackPayment} from "../utils"
 
 export interface Wallet {
     id: number,
@@ -54,21 +54,85 @@ export class WalletService {
     async fundWallet(amount: number) : Promise<Wallet> {
       const wallet = await this.getWallet();
 
-      await payViaPaystack(amount);
+      try {
+        const initPayment = await payViaPaystack(this.user.email, amount);
+
+        db(TransactionService.table).insert({
+          wallet_id: wallet.id,
+          type: 'CREDIT',
+          debit: 0.00,
+          credit: amount,
+          narration: 'wallet funding initiated',
+          status: 'PENDING',
+          meta: {
+            initial_attempt: initPayment.data,
+            email: this.user.email,
+            amount: amount,
+            paystack_reference: initPayment.data.reference
+          }
+        });
+
+        return initPayment.data;
+      } catch (error) {
+        
+        throw new Error(`wallet funding initialisation failed: ${getErrorMessage(error)}.`); 
+      }
+    }
+
+    async completeWalletFunding (reference: string) {
+      const response = await verifyPaystackPayment(reference);
+
+      if (response.statusCode !== 200) {
+        await db(TransactionService.table).where('email', this.user.email)
+        .whereRaw('?? \\? ?', ['meta->paystack_reference', reference])
+        .update({
+          narration: 'Payment unsuccessful',
+          status: 'FAILED',
+          meta: {
+            paystack_reference: reference,
+            message: response.message
+          }
+        });
+
+        return
+      }
+
+      if (response.data.status !== "success") {
+        await db(TransactionService.table).where('email', this.user.email)
+        .whereRaw('?? \\? ?', ['meta->paystack_reference', reference])
+        .update({
+          narration: 'Payment unsuccessful',
+          status: 'FAILED',
+          meta: {
+            paystack_reference: reference,
+            message: response.message,
+            data: response.data
+          }
+        });
+
+        return
+      }
+
+      const wallet = await this.getWallet();
+      const amount = response.data.amount / 100;
 
       try {
         await db.transaction(async trx => {
 
           await Promise.all([
             trx(WalletService.table).where('id', wallet.id).increment('available_balance', amount),
-            trx(TransactionService.table).insert({
-              wallet_id: wallet.id,
-              type: 'CREDIT',
-              debit: 0.00,
+            trx(TransactionService.table).where('email', this.user.email)
+            .whereRaw('?? \\? ?', ['meta->paystack_reference', reference])
+            .update({
+              narration: 'Payment successful',
+              status: 'SUCCESS',
               credit: amount,
-              narration: 'wallet funded',
-              status: 'SUCCESS'
-           })
+              meta: {
+                paystack_reference: reference,
+                message: response.message,
+                data: response.data
+              }
+            })
           ])
            
         });

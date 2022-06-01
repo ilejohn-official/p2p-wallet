@@ -8,7 +8,8 @@ export interface Transaction {
     debit: number,
     credit: number,
     narration: string,
-    status: "SUCCESS" | "FAILED" | "PENDING"
+    status: "SUCCESS" | "FAILED" | "PENDING",
+    meta?: JSON | string | null,
     updatedAt: string,
     createdAt: string
 }
