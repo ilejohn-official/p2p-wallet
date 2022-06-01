@@ -73,12 +73,11 @@ describe("Test /wallets route", () => {
       await db('wallets').insert({user_id: authUser.id});
       const response = await request(app).post("/wallets/fund").send({amount: 10000.99}).set('Authorization', `Bearer ${token}`);
 
-       expect(response.statusCode).toBe(200);
-       expect(response.body.message).toBe("Wallet funded successfully.");
-       expect(response.body.data.user_id).toBe(authUser.id);
-       expect(response.body.data.pending_debit_balance).toBe(0);
-       expect(response.body.data.available_balance).toBe(10000.99);
-       expect(response.body.data.pending_credit_balance).toBe(0);
+       expect(response.statusCode).toBe(302);
+       expect(response.body.message).toBe("Wallet funding initiated.");
+       expect(response.body.status).toBe('success');
+       expect(response.body.data).toHaveProperty('authorization_url');
+       expect(response.body.data).toHaveProperty('reference');
 
      });
 
