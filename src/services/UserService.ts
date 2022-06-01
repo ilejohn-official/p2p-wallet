@@ -4,6 +4,8 @@ export interface User {
     name: string,
     email: string,
     id: number,
+    updatedAt: string,
+    createdAt: string
 }
 
 export class UserService {
