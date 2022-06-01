@@ -11,4 +11,6 @@ export default {
   dbPassword: process.env.DB_PASSWORD,
   dbDatabase: process.env.DB_DATABASE,
   dbDatabaseTest: process.env.DB_DATABASE_TEST,
+  paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
+  paystackBaseUrl: process.env.PAYSTACK_BASE_URL || "api.paystack.co"
 };
