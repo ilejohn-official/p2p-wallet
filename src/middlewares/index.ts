@@ -15,7 +15,6 @@ export async function authenticateUser(request:CustomRequest, response:Response,
     }
 
     let token = request.headers.authorization.split(" ")[1];
-
     
     if (!token) {
       return  response.status(403).json({status: 'error', message: 'unauthorised access'});
