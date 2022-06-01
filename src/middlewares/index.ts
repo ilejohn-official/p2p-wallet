@@ -8,7 +8,7 @@ const {appKey} = envVariables;
 
 export type CustomRequest = Request & { user?: User | JwtPayload | string}
 
-export async function authenticateUser(request:CustomRequest, response:Response, next:NextFunction) {
+export const authenticateUser = (request:CustomRequest, response:Response, next:NextFunction) => {
 
     if (!request.headers.authorization) {
       return  response.status(403).json({status: 'error', message: 'unauthorised access'});

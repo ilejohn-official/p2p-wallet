@@ -9,7 +9,7 @@
     "serve": "tsc && ts-node-dev --respawn dist/index.js",
     "migrate:development": "knex migrate:latest --env development",
     "migrate:test": "knex migrate:latest --env test",
-    "test": "cross-env APP_ENV=test jest --testTimeout=15000 --detectOpenHandles --forceExit"
+    "test": "cross-env APP_ENV=test jest --config --testTimeout=15000 --detectOpenHandles --forceExit"
   },
   "repository": {
     "type": "git",

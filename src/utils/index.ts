@@ -1,6 +1,6 @@
 import bycrpt from "bcrypt";
 
-export function getErrorMessage(error: unknown): string {
+export const getErrorMessage = (error: unknown): string => {
     if (error instanceof Error) return error.message
     return String(error)
 }
@@ -13,14 +13,15 @@ export const validateEmail = (email: string): RegExpMatchArray | null => {
       );
 };
 
-export async function hashPassword (plaintextPassword:string): Promise<string>{
+export const hashPassword = async (plaintextPassword:string): Promise<string> => {
     return bycrpt.hash(plaintextPassword, 10);
 };
   
-export async function verifyPassword (plaintextPassword:string, hashedPassword:string): Promise<boolean> {
+export const verifyPassword = (plaintextPassword:string, hashedPassword:string): Promise<boolean> => {
     return bycrpt.compare(plaintextPassword, hashedPassword);
 };
 
-export async function payViaPaystack(amount: number) {
-    
+export const payViaPaystack = async (_amount: number) => {
+
+    return true;
 }
