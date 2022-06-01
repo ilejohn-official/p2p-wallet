@@ -3,7 +3,7 @@ import {hashPassword} from "../utils";
 export interface User {
     name: string,
     email: string,
-    id: number
+    id: number,
 }
 
 export class UserService {
@@ -24,7 +24,7 @@ export class UserService {
       return users[0];
     }
 
-    static async getUserByEmail(email: string): Promise<User> {
+    static async getUserByEmail(email: string) {
       return db(UserService.table).where('email', email).first();
     }
 

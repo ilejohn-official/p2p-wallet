@@ -4,7 +4,7 @@ export default {
   port: process.env.APP_PORT,
   appName: process.env.APP_NAME || "P2P-Wallet",
   appEnv: process.env.APP_ENV || "development",
-  appKey: process.env.APP_KEY,
+  appKey: process.env.APP_KEY || "wsdqaerfjeu",
   appUrl: process.env.APP_URL,
   dbClient: process.env.DB_CLIENT,
   dbUser: process.env.DB_USER,
