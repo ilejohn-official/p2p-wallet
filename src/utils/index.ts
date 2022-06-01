@@ -20,3 +20,7 @@ export async function hashPassword (plaintextPassword:string): Promise<string>{
 export async function verifyPassword (plaintextPassword:string, hashedPassword:string): Promise<boolean> {
     return bycrpt.compare(plaintextPassword, hashedPassword);
 };
+
+export async function payViaPaystack(amount: number) {
+    
+}

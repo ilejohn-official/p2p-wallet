@@ -5,9 +5,8 @@ import {hashPassword} from "../utils";
 import { User } from "../services/UserService";
 import {WalletService} from "../services/WalletService";
 
-type dbUser = User & {createdAt?: string, updatedAt?: string}; 
 let token: string;
-let authUser: dbUser;
+let authUser: User;
 
 // before each request, create a user and log them in
 beforeEach(async () => {
