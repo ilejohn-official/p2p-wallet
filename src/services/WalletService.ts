@@ -138,9 +138,9 @@ export class WalletService {
     }
 
     static async getWalletByEmail(email: string): Promise<Wallet> {
-      const user = await UserService.getUserByEmail(email);
-
-      return db(WalletService.table).where('user_id', user.id).first();
+        const user = await UserService.getUserByEmail(email);
+        
+        return db(WalletService.table).where('user_id', user.id).first();
     }
 
 }

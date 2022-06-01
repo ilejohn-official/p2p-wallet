@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { UserService} from "../services/UserService";
+import { User, UserService} from "../services/UserService";
 import envVariables from "../config";
 import {getErrorMessage, verifyPassword, validateEmail} from "../utils";
 import { authenticateUser } from "../middlewares";
@@ -9,6 +9,8 @@ import {CustomRequest} from "../middlewares";
 
 const router = express.Router();
 const { appKey } = envVariables;
+
+type UserHidden = User & {password: string}
 
 /**
  * 
@@ -24,7 +26,7 @@ router.post("/login", async (request:Request, response:Response) => {
       throw new Error('Email not valid'); 
      }
 
-     const user = await UserService.getUserByEmail(email);
+     const user = await UserService.getUserByEmail(email) as UserHidden;
 
      if(!user) {
         throw new Error('User with record not found');

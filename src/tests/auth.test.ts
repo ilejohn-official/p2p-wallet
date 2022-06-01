@@ -9,7 +9,6 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
- await new Promise<void>(resolve => setTimeout(() => resolve(), 10000));
  await db.destroy();
 });
 

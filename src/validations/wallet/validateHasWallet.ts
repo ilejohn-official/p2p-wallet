@@ -8,7 +8,7 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
     const handler = new WalletService(user);
     const hasWallet = await handler.hasWallet();
 
-    if (Number(hasWallet.count) < 1) {
+    if (hasWallet.count < 1) {
       return response.status(403).json({status: 'error', message: 'You do not have an account, please create one.'});
     }
 

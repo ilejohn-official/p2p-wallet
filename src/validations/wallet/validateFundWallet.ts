@@ -8,7 +8,7 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
       return response.status(422).json({status: 'error', message: 'Amount required'});
     }
     
-    if(amount < 0) {
+    if(typeof amount !== 'number' || amount < 0) {
       return response.status(422).json({status: 'error', message: 'Invalid amount supplied. Amount must be a positive number'});
     }
 

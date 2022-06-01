@@ -26,7 +26,7 @@ export class UserService {
       return users[0];
     }
 
-    static async getUserByEmail(email: string) {
+    static async getUserByEmail(email: string): Promise<User> {
       return db(UserService.table).where('email', email).first();
     }
 

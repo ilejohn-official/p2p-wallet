@@ -22,10 +22,11 @@ beforeEach(async () => {
 // remove all records
 afterEach(async () => {
   await db('users').del();
+  await db('wallets').del();
+  await db('transactions').del();
 });
 
 afterAll(async () => {
- await new Promise<void>(resolve => setTimeout(() => resolve(), 10000));
  await db.destroy();
 });
 
@@ -39,9 +40,9 @@ describe("Test /wallets route", () => {
             expect(response.statusCode).toBe(201);
             expect(response.body.message).toBe("Wallet created successfully.");
             expect(response.body.data.user_id).toBe(authUser.id);
-            expect(response.body.data.pending_debit_balance).toBe('0.00');
-            expect(response.body.data.available_balance).toBe('0.00');
-            expect(response.body.data.pending_credit_balance).toBe('0.00');
+            expect(response.body.data.pending_debit_balance).toBe(0);
+            expect(response.body.data.available_balance).toBe(0);
+            expect(response.body.data.pending_credit_balance).toBe(0);
 
         });
 
@@ -64,6 +65,87 @@ describe("Test /wallets route", () => {
             expect(response.body.message).toBe('You already have a wallet account.');
   
         });    
-    });
+  });
+
+  describe("Test POST /wallets/* routes", () => {
+    test("Wallet funding ", async () => {
+
+      await db('wallets').insert({user_id: authUser.id});
+      const response = await request(app).post("/wallets/fund").send({amount: 10000.99}).set('Authorization', `Bearer ${token}`);
+
+       expect(response.statusCode).toBe(200);
+       expect(response.body.message).toBe("Wallet funded successfully.");
+       expect(response.body.data.user_id).toBe(authUser.id);
+       expect(response.body.data.pending_debit_balance).toBe(0);
+       expect(response.body.data.available_balance).toBe(10000.99);
+       expect(response.body.data.pending_credit_balance).toBe(0);
+
+     });
+
+      test("Wallet funding with invalid data", async () => {
+        await db('wallets').insert({user_id: authUser.id});
+        const response = await request(app).post("/wallets/fund").send({amount: 'fourty thousand naira'}).set('Authorization', `Bearer ${token}`);
+
+        expect(response.statusCode).toBe(422);
+        expect(response.body.status).toBe("error");
+        expect(response.body.message).toBe('Invalid amount supplied. Amount must be a positive number');
+      });
+
+      test("Wallet transfer ", async () => {
+            //create wallet for auth user
+            const wallet = await db('wallets').insert({user_id: authUser.id}, ['id']);
+            //fund it
+            await db('wallets').where('id', wallet[0].id).increment('available_balance', 2000.50);
+
+            const hashedPassword = await hashPassword('2iem34i3i2');
+
+            //create recepient
+            const user = await db('users').insert(
+              {name: "Adam Smith", email: "smith@example.com", password: hashedPassword}, 
+              ['id', 'email']
+            );
+            const recepient = user[0];
+
+            //create recepient wallet
+            await db('wallets').insert({user_id: recepient.id});
+
+            //transfer
+            const response = await request(app).post("/wallets/transfer")
+                                    .send({amount : 1000, email: recepient.email})
+                                    .set('Authorization', `Bearer ${token}`);
+            
+            const recepientWallet = await db('wallets').where('user_id', recepient.id).first();
+            
+            expect(response.statusCode).toBe(200);
+            expect(response.body.message).toBe("Transfer successful.");
+            expect(response.body.data.user_id).toBe(authUser.id);
+            expect(response.body.data.pending_debit_balance).toBe(0);
+            expect(response.body.data.available_balance).toBe(1000.50);
+            expect(response.body.data.pending_credit_balance).toBe(0);
+
+            expect(recepientWallet.user_id).toBe(recepient.id);
+            expect(recepientWallet.pending_debit_balance).toBe(0);
+            expect(recepientWallet.available_balance).toBe(1000);
+            expect(recepientWallet.pending_credit_balance).toBe(0);
+      });
+
+      test("Wallet transfer with invalid data", async () => {
+            
+        const wallet = await db('wallets').insert({user_id: authUser.id}, ['id']);
+        await db('wallets').where('id', wallet[0].id).increment('available_balance', 2000000);
+
+        const hashedPassword = await hashPassword('2iem34iejej3i2');
+        const user = await db('users').insert({name: "Adam Smith", email: "smith@example.com", password: hashedPassword}, ['id']);
+        await db('wallets').insert({user_id: user[0].id});
+
+        const response = await request(app).post("/wallets/transfer")
+                                .send({amount : 569.73, email: 'some_random_stuff@elv.com'})
+                                .set('Authorization', `Bearer ${token}`);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.status).toBe("error");
+        expect(response.body.message).toBe("Recepient is not registered");
+      });
+  });
 
 });

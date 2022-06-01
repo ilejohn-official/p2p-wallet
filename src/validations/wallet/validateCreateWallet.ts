@@ -8,7 +8,7 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
     const handler = new WalletService(user);
     const hasWallet = await handler.hasWallet();
 
-    if (Number(hasWallet.count) > 0) {
+    if (hasWallet.count > 0) {
       return response.status(403).json({status: 'error', message: 'You already have a wallet account.'});
     }
 
