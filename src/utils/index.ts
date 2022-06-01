@@ -56,7 +56,7 @@ export const verifyPaystackPayment = async (reference: string) => {
         }
     }
 
-    return makeRequest(options, "");
+    return makeRequest(options);
 }
 
     /**
@@ -66,7 +66,7 @@ export const verifyPaystackPayment = async (reference: string) => {
      * @param {Object | string} data
      * @return {Promise} a promise of request
      */
- const makeRequest = (options: object, data: object | string): Promise<any> => {
+ const makeRequest = (options: object, data: object | string = ""): Promise<any> => {
     return new Promise((resolve, reject) => {
       const req = https.request(options, (res) => {
 
@@ -84,8 +84,11 @@ export const verifyPaystackPayment = async (reference: string) => {
       req.on('error', (err) => {
         reject(err);
       });
-  
-      req.write(data)
-      req.end();
+
+     if(data !== "") {
+        req.write(data)
+        req.end();
+     }
+      
     });
   }

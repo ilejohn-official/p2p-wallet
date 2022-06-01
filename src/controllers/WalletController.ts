@@ -16,11 +16,11 @@ const UserController = {
 
     try {
      const handler = new WalletService(user);
-     const wallet = await handler.create();
+     const wallet = await handler.getBalance();
 
       response.status(201).json({
         status: 'success',
-        message: 'Wallet created successfully.',
+        message: 'Wallet balance retrieved successfully.',
         data: wallet
       });
     } catch (error) {

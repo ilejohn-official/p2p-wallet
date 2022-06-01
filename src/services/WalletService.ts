@@ -57,19 +57,19 @@ export class WalletService {
       try {
         const initPayment = await payViaPaystack(this.user.email, amount);
 
-        db(TransactionService.table).insert({
+        await db(TransactionService.table).insert({
           wallet_id: wallet.id,
           type: 'CREDIT',
           debit: 0.00,
           credit: amount,
           narration: 'wallet funding initiated',
           status: 'PENDING',
-          meta: {
-            initial_attempt: initPayment.data,
-            email: this.user.email,
-            amount: amount,
-            paystack_reference: initPayment.data.reference
-          }
+          meta: JSON.stringify({
+            "initial_attempt": initPayment.data,
+            "email": this.user.email,
+            "amount": amount,
+            "paystack_reference": initPayment.data.reference
+          })
         });
 
         return initPayment.data;
@@ -88,10 +88,10 @@ export class WalletService {
         .update({
           narration: 'Payment unsuccessful',
           status: 'FAILED',
-          meta: {
+          meta: JSON.stringify({
             paystack_reference: reference,
             message: response.message
-          }
+          })
         });
 
         return
@@ -103,18 +103,18 @@ export class WalletService {
         .update({
           narration: 'Payment unsuccessful',
           status: 'FAILED',
-          meta: {
+          meta: JSON.stringify({
             paystack_reference: reference,
             message: response.message,
             data: response.data
-          }
+          })
         });
 
         return
       }
 
       const wallet = await this.getWallet();
-      const amount = response.data.amount / 100;
+      const amount = (response.data.amount/100);
 
       try {
         await db.transaction(async trx => {
@@ -127,11 +127,11 @@ export class WalletService {
               narration: 'Payment successful',
               status: 'SUCCESS',
               credit: amount,
-              meta: {
+              meta: JSON.stringify({
                 paystack_reference: reference,
                 message: response.message,
                 data: response.data
-              }
+              })
             })
           ])
            

@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import {CustomRequest} from "../../middlewares";
 
-export default async(request:CustomRequest, response:Response, next:NextFunction) => {
+export default async (request:CustomRequest, response:Response, next:NextFunction) => {
     const amount = request.body.amount;
 
     if (!amount) {
