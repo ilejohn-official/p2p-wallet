@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --w",
     "start": "tsc && ts-node dist/index.js",
-    "serve": "tsc && ts-node-dev --respawn dist/index.js",
+    "serve": "tsc && ts-node-dev --watch --respawn dist/index.js",
     "migrate": "knex migrate:latest --env production",
     "migrate:development": "knex migrate:latest --env development",
     "migrate:test": "knex migrate:latest --env test",
