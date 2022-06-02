@@ -24,7 +24,13 @@ export class TransactionService {
     }
 
     getAll() {
-     return db(TransactionService.table).where('wallet_id', this.wallet.id);  
+     return db(TransactionService.table)
+     .select('id', 'wallet_id', 'type', 'debit', 'credit', 'narration', 'status', 'createdAt', 'updatedAt')
+     .where('wallet_id', this.wallet.id);  
+    }
+
+    static async getTransactionById(id: Transaction["id"]) : Promise<Transaction>{
+      return db(TransactionService.table).where('id', id).first();
     }
 
 }
