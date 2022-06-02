@@ -49,7 +49,7 @@ export const verifyPaystackPayment = async (reference: string) => {
     const options = {
         hostname: paystackBaseUrl,
         port: 443,
-        path: '/transaction/verify/' + reference,
+        path: `/transaction/verify/${reference}`,
         method: 'GET',
         headers: {
           Authorization: `Bearer ${paystackSecretKey}`
@@ -86,9 +86,9 @@ export const verifyPaystackPayment = async (reference: string) => {
       });
 
      if(data !== "") {
-        req.write(data)
-        req.end();
+        req.write(data);
      }
-      
+     
+     req.end();
     });
   }

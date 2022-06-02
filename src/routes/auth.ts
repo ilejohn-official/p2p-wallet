@@ -42,7 +42,7 @@ router.post("/login", async (request:Request, response:Response) => {
           ...user
         },
         appKey,
-        { expiresIn: 60*60 }, // expires in 60 minutes
+        { expiresIn: 120*60 }, // expires in 120 minutes
     );
 
     response.status(200).json({
