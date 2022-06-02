@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import apiRoutes from "../src/routes/index";
+import apiRoutes from "../src/routes";
 
 const app = express();
 
