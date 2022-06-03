@@ -45,7 +45,10 @@ const config: { [key: string]: Knex.Config } = {
 
   production: {
     client: dbClient,
-    connection: dbUrl,
+    connection: {
+      connectionString: dbUrl,
+      ssl: { rejectUnauthorized: false },
+    },
     pool: {
       min: 2,
       max: 10
