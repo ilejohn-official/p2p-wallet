@@ -2,8 +2,6 @@ import type { Knex } from "knex";
 import envVariables from "./src/config/index";
 const {dbClient, dbUser, dbPassword, dbDatabase, dbDatabaseTest, dbUrl} = envVariables;
 
-// Update with your config settings.
-
 const config: { [key: string]: Knex.Config } = {
   development: {
     client: dbClient,

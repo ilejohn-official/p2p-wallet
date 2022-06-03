@@ -1,4 +1,3 @@
-import db from "../../database/db.connection";
 import { TransactionRepository } from "../repositories/transaction_repository";
 import {Wallet} from "../services/WalletService";
 
@@ -30,5 +29,4 @@ export class TransactionService {
     getAll(): Promise<Transaction[]> {
      return this.transactionRepository.getTransactionsByWalletId(this.wallet.id);
     }
-
 }

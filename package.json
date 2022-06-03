@@ -4,9 +4,10 @@
   "description": "A simple p2p wallet system",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc --w",
-    "start": "tsc && ts-node dist/index.js",
-    "serve": "tsc && ts-node-dev --watch --respawn dist/index.js",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "serve": "concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
     "migrate": "knex migrate:latest --env production",
     "migrate:development": "knex migrate:latest --env development",
     "migrate:test": "knex migrate:latest --env test",
@@ -43,7 +44,9 @@
     "@types/jest": "^27.5.1",
     "@types/pg": "^8.6.5",
     "@types/supertest": "^2.0.12",
+    "concurrently": "^7.2.1",
     "jest": "^28.1.0",
+    "nodemon": "^2.0.16",
     "supertest": "^6.2.3",
     "ts-jest": "^28.0.3",
     "ts-node-dev": "^2.0.0"
