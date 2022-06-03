@@ -73,7 +73,7 @@ describe("Test /transactions route", () => {
             //retrieve transactions for auth user
 
             const transactions = await request(app).get("/transactions").set('Authorization', `Bearer ${token}`);
-            console.log(transactions.body)
+
             expect(transactions.statusCode).toBe(200);
             expect(transactions.body.status).toBe("success");
             expect(transactions.body.message).toBe("Transactions retrieved successfully.");
