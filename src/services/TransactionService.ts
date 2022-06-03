@@ -1,5 +1,6 @@
 import db from "../../database/db.connection";
-import {Wallet} from "../services/WalletService"
+import { TransactionRepository } from "../repositories/transaction_repository";
+import {Wallet} from "../services/WalletService";
 
 export interface Transaction {
     id: number,
@@ -18,19 +19,16 @@ export class TransactionService {
 
     static table:string = "transactions";
     wallet: Wallet;
+    
+    private transactionRepository: TransactionRepository;
 
     constructor(wallet: Wallet){
+     this.transactionRepository = new TransactionRepository()
      this.wallet = wallet;
     }
 
-    getAll() {
-     return db(TransactionService.table)
-     .select('id', 'wallet_id', 'type', 'debit', 'credit', 'narration', 'status', 'createdAt', 'updatedAt')
-     .where('wallet_id', this.wallet.id);  
-    }
-
-    static async getTransactionById(id: Transaction["id"]) : Promise<Transaction>{
-      return db(TransactionService.table).where('id', id).first();
+    getAll(): Promise<Transaction[]> {
+     return this.transactionRepository.getTransactionsByWalletId(this.wallet.id);
     }
 
 }

@@ -21,13 +21,13 @@ const TransactionController = {
     const handle = new TransactionService(wallet);
     const transactions = await handle.getAll();
 
-      response.status(201).json({
+      response.status(200).json({
         status: 'success',
         message: 'Transactions retrieved successfully.',
         data: transactions
       });
     } catch (error) {
-      response.status(400).json({status: 'error', message: `failed to create wallet : ${getErrorMessage(error)}`});
+      response.status(400).json({status: 'error', message: `failed to retrieve transactions : ${getErrorMessage(error)}`});
     }
   },
   

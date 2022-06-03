@@ -1,7 +1,9 @@
 import db from "../../database/db.connection";
-import { User, UserService } from "./UserService";
-import { TransactionService } from "./TransactionService";
-import {getErrorMessage, payViaPaystack, verifyPaystackPayment} from "../utils"
+import { WalletRepository } from "../repositories/wallet_repository";
+import { TransactionRepository } from "../repositories/transaction_repository";
+import { User } from "./UserService";
+import {getErrorMessage, payViaPaystack, verifyPaystackPayment} from "../utils";
+
 
 export interface Wallet {
     id: number,
@@ -12,7 +14,7 @@ export interface Wallet {
     createdAt: Date,
     updatedAt: Date
 }
-interface WalletCount {
+export interface WalletCount {
  count: number | string;
 }
 
@@ -21,12 +23,15 @@ export class WalletService {
     static table:string = "wallets";
     user: User;
 
+    private walletRepository: WalletRepository;
+
     constructor(user: User){
+     this.walletRepository = new WalletRepository();
      this.user = user;
     }
 
     async getBalance(): Promise<Partial<Wallet>> {
-      const wallet = await WalletService.getWalletByEmail(this.user.email);
+      const [wallet] = await this.walletRepository.getWalletByUserId(this.user.id);
 
       const {pending_debit_balance, pending_credit_balance, ...walletBalance} = wallet
 
@@ -35,20 +40,21 @@ export class WalletService {
 
     async create(): Promise<Wallet> {
 
-      const wallets = await db(WalletService.table).insert({user_id: this.user.id}, [
-          'id', 'user_id', 'available_balance', 'pending_debit_balance', 'pending_credit_balance'
+      const [wallet] = await this.walletRepository.create({user_id: this.user.id},[
+        'id', 'user_id', 'available_balance', 'pending_debit_balance', 'pending_credit_balance'
       ]);
 
-      return wallets[0];
+      return wallet;
     }
 
     async hasWallet() : Promise<WalletCount> {
-        return db(WalletService.table).select(db.raw('count(*)'))
-        .where('user_id', '=', this.user.id).first();
+      return this.walletRepository.hasWallet(this.user.id);
+
     }
 
     async getWallet() : Promise<Wallet>{
-      return db(WalletService.table).where('user_id', this.user.id).first();
+      const [wallet] = await this.walletRepository.getWalletByUserId(this.user.id);
+      return wallet;
     }
 
     async fundWallet(amount: number) : Promise<Wallet> {
@@ -57,7 +63,7 @@ export class WalletService {
       try {
         const initPayment = await payViaPaystack(this.user.email, amount);
 
-        await db(TransactionService.table).insert({
+        await (new TransactionRepository).create({
           wallet_id: wallet.id,
           type: 'CREDIT',
           debit: 0.00,
@@ -85,24 +91,20 @@ export class WalletService {
       const response = await verifyPaystackPayment(reference);
 
       if (!response.status) {
-        await db(TransactionService.table).where('wallet_id', wallet.id)
-          .whereJsonPath('meta', '$.paystack_reference', '=', reference)
-          .update({
+        await (new TransactionRepository).updateByRefAndWalletId({
             narration: `Payment Unsuccessful: ${response.message}`,
             status: 'FAILED'
-        });
+         }, wallet.id, reference);
 
         throw new Error(response.message);
       }
 
       if (response.data.status !== "success") {
-        await db(TransactionService.table).where('wallet_id', wallet.id)
-          .whereJsonPath('meta', '$.paystack_reference', '=', reference)
-          .update({
-            narration: `Payment Unsuccessful:  ${response.data.message || response.data.gateway_response}`,
-            status: 'FAILED',
-            meta: db.jsonSet('meta', '$.final_data', JSON.stringify(response.data) )
-          })
+        await (new TransactionRepository).updateByRefAndWalletId({
+          narration: `Payment Unsuccessful:  ${response.data.message || response.data.gateway_response}`,
+          status: 'FAILED',
+          meta: db.jsonSet('meta', '$.final_data', JSON.stringify(response.data) )
+        }, wallet.id, reference);
 
         throw new Error(response.data.message || response.data.gateway_response);
       }
@@ -110,19 +112,11 @@ export class WalletService {
       const amount = (response.data.amount/100);
 
       try {
-        await db.transaction(async trx => {
-
-          await Promise.all([
-            trx(WalletService.table).where('id', wallet.id).increment('available_balance', amount),
-            trx(TransactionService.table).where('wallet_id', wallet.id)
-            .whereJsonPath('meta', '$.paystack_reference', '=', reference)
-            .update({
-              narration: `Payment successful: ${response.data.message || response.data.gateway_response}`,
-              status: 'SUCCESS',
-              credit: amount,
-              meta: db.jsonSet('meta', '$.final_data', JSON.stringify(response.data))
-            })
-          ])
+        await this.walletRepository.fundWalletOperation(wallet.id, reference, amount, {
+          narration: `Payment successful: ${response.data.message || response.data.gateway_response}`,
+          status: 'SUCCESS',
+          credit: amount,
+          meta: db.jsonSet('meta', '$.final_data', JSON.stringify(response.data))
         });
 
         return this.getWallet();
@@ -131,67 +125,26 @@ export class WalletService {
       }
     }
 
-    async transfer(amount: number, recepientEmail: string) {
-      const wallet = await this.getWallet();
-  
-      const recepientWallet = await WalletService.getWalletByEmail(recepientEmail);
+    async transfer(amount: number, recepient: User) {
+      const [wallet, recepientWallet] = await WalletRepository.getWalletsByUserIds([this.user.id, recepient.id]);
   
       try {
-          await db.transaction(async trx => {
+          await this.walletRepository.walletTransferOperation(wallet.id, this.user.name, recepientWallet.id, amount)
   
-              await trx(WalletService.table).where('id', wallet.id).decrement('available_balance', amount).increment('pending_debit_balance', amount);
-  
-              const senderTransaction = await trx(TransactionService.table).insert({
-                  wallet_id: wallet.id,
-                  type: 'DEBIT',
-                  debit: amount,
-                  credit: 0.00,
-                  narration: 'wallet transfer in process',
-                  status: 'PENDING'
-              }, ['id']);
-  
-              const received = await trx(WalletService.table).where('id', recepientWallet.id).increment('available_balance', amount);
-  
-              await trx(TransactionService.table).insert({
-                  wallet_id: recepientWallet.id,
-                  type: 'CREDIT',
-                  debit: 0.00,
-                  credit: amount,
-                  narration: `Your wallet has received a transfer from ${this.user.name}`,
-                  status: 'SUCCESS'
-              });
-  
-              if(received) {
-                  await trx(WalletService.table).where('id', wallet.id).decrement('pending_debit_balance', amount);
-  
-                  await trx(TransactionService.table).where('id', senderTransaction[0].id).update({
-                      narration: 'Wallet transfer successful',
-                      status: 'SUCCESS'
-                  });
-              }
-             
-          });
-  
-          return this.getWallet();
+          return await this.getWallet();
         } catch (error) {
   
-          await db(TransactionService.table).insert({
-              wallet_id: wallet.id,
-              type: 'DEBIT',
-              debit: amount,
-              credit: 0.00,
-              narration: 'Wallet transfer failed, try again later',
-              status: 'FAILED'
-          });
+          await (new TransactionRepository).create({
+            wallet_id: wallet.id,
+            type: 'DEBIT',
+            debit: amount,
+            credit: 0.00,
+            narration: 'Wallet transfer failed, try again later',
+            status: 'FAILED'
+         });
   
           throw new Error(`Wallet transfer failed: ${getErrorMessage(error)}`); 
         }
-    }
-
-    static async getWalletByEmail(email: string): Promise<Wallet> {
-        const user = await UserService.getUserByEmail(email);
-        
-        return db(WalletService.table).where('user_id', user.id).first();
     }
 
 }

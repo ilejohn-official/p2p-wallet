@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { CustomRequest } from "../middlewares";
-import { User } from "../services/UserService";
+import { User, UserService } from "../services/UserService";
 import {WalletService} from "../services/WalletService";
 import {getErrorMessage} from "../utils";
 
@@ -114,7 +114,9 @@ const UserController = {
 
     try {
       const handler = new WalletService(user);
-      const wallet = await handler.transfer(amount, recepientEmail);
+      const recepient = await (new UserService).getUserByEmail(recepientEmail);
+
+      const wallet = await handler.transfer(amount, recepient);
 
       response.status(200).json({
         status: 'success',

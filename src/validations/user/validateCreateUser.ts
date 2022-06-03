@@ -17,7 +17,7 @@ export default async (request:Request, response:Response, next:NextFunction) => 
       return response.status(422).json({status: 'error', message: 'Invalid email type supplied'});
     }
 
-    const checkUser = await UserService.getUserByEmail(email);
+    const checkUser = await (new UserService).getUserByEmail(email);
 
     if (checkUser !== undefined) {
       return response.status(422).json({status: 'error', message: 'Email already exists'});

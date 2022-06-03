@@ -29,7 +29,7 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
     const handler = new WalletService(user);
 
     try {
-      const recepient = await UserService.getUserByEmail(recepientEmail);
+      const recepient = await (new UserService).getUserByEmail(recepientEmail);
 
       if (!recepient) {
         throw new Error('Recepient is not registered');
