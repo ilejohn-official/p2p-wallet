@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 export default {
-  port: process.env.APP_PORT || 5000,
+  port: process.env.PORT || 5000,
   appName: process.env.APP_NAME || "P2P-Wallet",
   appEnv: process.env.APP_ENV || "development",
   appKey: process.env.APP_KEY || "wsdqaerfjeu",
