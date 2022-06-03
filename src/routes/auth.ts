@@ -26,7 +26,7 @@ router.post("/login", async (request:Request, response:Response) => {
       throw new Error('Email not valid'); 
      }
 
-     const user = await UserService.getUserByEmail(email) as UserHidden;
+     const user = await (new UserService).getUserByEmail(email) as UserHidden;
 
      if(!user) {
         throw new Error('User with record not found');

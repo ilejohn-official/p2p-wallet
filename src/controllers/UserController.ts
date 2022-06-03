@@ -11,7 +11,7 @@ const UserController = {
    */
   allUsers: async (request:Request, response:Response)=> {
     try {
-      const users = await UserService.all();
+      const users = await (new UserService).all();
 
       response.status(200).json({
         status: 'success',
@@ -37,8 +37,7 @@ const UserController = {
     const password = request.body.password;
 
     try {
-     const handler = new UserService();
-     const user = await handler.create(name, email, password);
+     const user = await (new UserService).create(name, email, password);
 
       response.status(201).json({
         status: 'success',

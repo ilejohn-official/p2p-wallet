@@ -1,5 +1,5 @@
-import db from "../../database/db.connection";
 import {hashPassword} from "../utils";
+import {UserRepository} from "../repositories/user_repository";
 export interface User {
     name: string,
     email: string,
@@ -10,28 +10,28 @@ export interface User {
 
 export class UserService {
 
-    static table:string = "users";
+    private userRepository: UserRepository;
 
     constructor(){
-     
+      this.userRepository = new UserRepository();
     }
 
     async create(name:string, email:string, password:string): Promise<User> {
       let hashedPassword = await hashPassword(password);
 
-      const users = await db(UserService.table).insert({
+      const [user] = await this.userRepository.create({
         name, email, password: hashedPassword
       }, ['id', 'name', 'email']);
 
-      return users[0];
+      return user;
     }
 
-    static async getUserByEmail(email: string): Promise<User> {
-      return db(UserService.table).where('email', email).first();
+    async getUserByEmail(email: string): Promise<User> {
+      return this.userRepository.getUserByEmail(email);
     }
 
-    static async all(): Promise<User[]> {
-      return db(UserService.table);
+    async all(): Promise<User[]> {
+      return this.userRepository.all();
     }
 
 }

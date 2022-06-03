@@ -67,7 +67,7 @@ describe("Test /users route", () => {
 
         const response = await request(app).get("/users").set('Authorization', `Bearer ${token}`);
         expect(response.statusCode).toBe(200);
-        expect(response.body.data.length).toBe(5);
+        expect(response.body.data.length).toBe(5); // plus the one created before each test
 
     });
 
