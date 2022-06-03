@@ -1,3 +1,4 @@
+import { User } from "../services/UserService";
 import {BaseRepository} from "./index";
 
 export class UserRepository extends BaseRepository {
@@ -8,8 +9,9 @@ export class UserRepository extends BaseRepository {
         super(UserRepository.table);
     };
 
-    getUserByEmail(email: string) {
-     return  this.queryBuilder.where('email', email).first();
+    async getUserByEmail(email: string): Promise<User> {
+        const [user] = await this.queryBuilder.where('email', email);
+        return user;
     }
 
 };

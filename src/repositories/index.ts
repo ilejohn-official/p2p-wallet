@@ -15,7 +15,7 @@ export class BaseRepository {
       return this.queryBuilder;
     }
 
-    create(data: any, returning: string[], options = undefined): Knex.QueryBuilder {
+    create(data: any, returning: string[] = ['*'], options = undefined): Knex.QueryBuilder {
       return this.queryBuilder.insert(data, returning, options);
     }
 

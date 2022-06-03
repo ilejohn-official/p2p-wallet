@@ -10,11 +10,11 @@ let authUser: User;
 
 // before each request, create a user and log them in
 beforeEach(async () => {
-  const password = "<ws3P9o-0LL";
+  const password = "<ws3P9o@0LL";
   const hashedPassword = await hashPassword(password);
-  await db('users').insert({name: "Biola Alfred", email: "biolaalfred@example.com", password: hashedPassword});
+  await db('users').insert({name: "Ngozi Wilson", email: "ngozi@example.com", password: hashedPassword});
 
-  const response = await request(app).post('/login').send({email: "biolaalfred@example.com",  password: password});
+  const response = await request(app).post('/login').send({email: "ngozi@example.com",  password: password});
   token = response.body.data.token;
   authUser = response.body.data.user;
 });
@@ -100,7 +100,7 @@ describe("Test /wallets route", () => {
 
             //create recepient
             const user = await db('users').insert(
-              {name: "Adam Smith", email: "smith@example.com", password: hashedPassword}, 
+              {name: "Eve Daisy", email: "eve@example.com", password: hashedPassword}, 
               ['id', 'email']
             );
             const recepient = user[0];
@@ -134,7 +134,7 @@ describe("Test /wallets route", () => {
         await db('wallets').where('id', wallet[0].id).increment('available_balance', 2000000);
 
         const hashedPassword = await hashPassword('2iem34iejej3i2');
-        const user = await db('users').insert({name: "Adam Smith", email: "smith@example.com", password: hashedPassword}, ['id']);
+        const user = await db('users').insert({name: "Momo Adelaide", email: "momo@example.com", password: hashedPassword}, ['id']);
         await db('wallets').insert({user_id: user[0].id});
 
         const response = await request(app).post("/wallets/transfer")

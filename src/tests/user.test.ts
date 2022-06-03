@@ -7,11 +7,11 @@ let token: string;
 
 // before each request, create a user and log them in
 beforeEach(async () => {
-  const password = "<ws3P9o-0LL";
+  const password = "<ws3P9o-0Lu";
   const hashedPassword = await hashPassword(password);
-  await db('users').insert({name: "Biola Alfred", email: "biolaalfred@example.com", password: hashedPassword});
+  await db('users').insert({name: "Biodun Alfred", email: "bioudunlfred@example.com", password: hashedPassword});
 
-  const response = await request(app).post('/login').send({email: "biolaalfred@example.com",  password: password});
+  const response = await request(app).post('/login').send({email: "bioudunlfred@example.com",  password: password});
   token = response.body.data.token;
 });
 
