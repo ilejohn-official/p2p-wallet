@@ -11,7 +11,7 @@ const UserController = {
    * @param {CustomRequest} request 
    * @param {Response} response 
    */
-  getWalletBalance: async (request:CustomRequest, response:Response) => {
+  getWalletBalance: async (request:CustomRequest, response:Response): Promise<void> => {
     const user = request.user as User;
 
     try {
@@ -34,7 +34,7 @@ const UserController = {
     * @param  {Response} response 
     */
   
-  create: async (request:CustomRequest, response:Response) => {
+  create: async (request:CustomRequest, response:Response): Promise<void> => {
     const user = request.user as User;
 
     try {
@@ -58,7 +58,7 @@ const UserController = {
      *
      */
   
-    fundWallet: async (request:CustomRequest, response:Response) => {
+    fundWallet: async (request:CustomRequest, response:Response): Promise<void> => {
       const user = request.user as User;
 
       try {
@@ -79,7 +79,7 @@ const UserController = {
      * @param {CustomRequest} request 
      * @param {Response} response 
      */
-    completeWalletFunding: async (request:CustomRequest, response:Response) => {
+    completeWalletFunding: async (request:CustomRequest, response:Response): Promise<void> => {
       const user = request.user as User;
       const reference = request.body.reference;
 
@@ -103,7 +103,7 @@ const UserController = {
      *
      */
 
-  transfer: async (request:CustomRequest, response:Response) => {
+  transfer: async (request:CustomRequest, response:Response): Promise<void> => {
     const amount = request.body.amount;
     const user = request.user as User;
 

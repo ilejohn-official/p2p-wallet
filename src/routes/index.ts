@@ -13,7 +13,7 @@ router.use('/users', userRouter);
 router.use('/wallets', walletRouter);
 router.use('/transactions', transactionRouter);
 
-router.get('/', (request: Request, response: Response) => {
+router.get('/', (_request: Request, response: Response): void => {
  response.send(`${appName} is Online!`);
 });
 
