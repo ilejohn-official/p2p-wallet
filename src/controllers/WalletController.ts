@@ -109,12 +109,11 @@ const UserController = {
 
   transfer: async (request:CustomRequest, response:Response) => {
     const amount = request.body.amount;
-    const recepientEmail = request.body.email;
     const user = request.user as User;
 
     try {
       const handler = new WalletService(user);
-      const recepient = await (new UserService).getUserByEmail(recepientEmail);
+      const recepient = request.recepient as User;
 
       const wallet = await handler.transfer(amount, recepient);
 

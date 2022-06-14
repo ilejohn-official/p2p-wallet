@@ -6,7 +6,7 @@ import {getErrorMessage} from "../utils";
 
 const {appKey} = envVariables;
 
-export type CustomRequest = Request & { user?: User | JwtPayload | string}
+export type CustomRequest = Request & { user?: User | JwtPayload | string, recepient?: User}
 
 export const authenticateUser = (request:CustomRequest, response:Response, next:NextFunction) => {
 

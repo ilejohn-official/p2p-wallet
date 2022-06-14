@@ -87,7 +87,6 @@ describe("Test /wallets route", () => {
 
         expect(response.statusCode).toBe(422);
         expect(response.body.status).toBe("error");
-        expect(response.body.message).toBe('Invalid amount supplied. Amount must be a positive number');
       });
 
       test("Wallet transfer ", async () => {

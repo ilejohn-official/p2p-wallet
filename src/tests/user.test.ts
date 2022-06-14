@@ -49,8 +49,6 @@ describe("Test /users route", () => {
               const response = await request(app).post("/users").send(user);
               expect(response.statusCode).toBe(422);
               expect(response.body.status).toBe('error');
-              expect(response.body.message).toBe('Name, email and password required');
-
         });    
   });
 
@@ -80,7 +78,6 @@ describe("Test /users route", () => {
        const response = await request(app).post("/users").send(user);
        expect(response.statusCode).toBe(422);
        expect(response.body.status).toBe('error');
-       expect(response.body.message).toBe('Name, email and password required');
 
     });    
   });

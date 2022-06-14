@@ -3,19 +3,17 @@ import {CustomRequest} from "../../middlewares";
 import { User, UserService } from "../../services/UserService";
 import {WalletService} from "../../services/WalletService";
 import {getErrorMessage, validateEmail} from "../../utils";
+import {transferSchema} from "../../validations/validationSchema";
 
 export default async(request:CustomRequest, response:Response, next:NextFunction) => {
     const amount = request.body.amount;
     const recepientEmail = request.body.email;
     const user = request.user as User;
     
+    let { error } = transferSchema.validate(request.body, { allowUnknown: true, abortEarly: false });
 
-    if (!amount || !recepientEmail) {
-      return response.status(422).json({status: 'error', message: 'Amount and recepient email required'});
-    }
-
-    if(typeof amount !== 'number' || amount < 0) {
-      return response.status(422).json({status: 'error', message: 'Invalid amount supplied. Amount must be a positive number'});
+    if (error) {
+      return response.status(422).json({status: 'error', message: error.message});
     }
 
     if(!validateEmail(recepientEmail)) {
@@ -49,6 +47,8 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
       if(!recepientWallet) {
         throw new Error('Recepient does not have an account');
       }
+
+      request.recepient = recepient;
     } catch (error) {
       return response.status(400).json({status: 'error', message: getErrorMessage(error)});
     }
