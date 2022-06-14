@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { CustomRequest } from "../middlewares";
-import { User, UserService } from "../services/UserService";
+import { User } from "../services/UserService";
 import {WalletService} from "../services/WalletService";
 import {getErrorMessage} from "../utils";
 
@@ -15,8 +15,7 @@ const UserController = {
     const user = request.user as User;
 
     try {
-     const handler = new WalletService(user);
-     const wallet = await handler.getBalance();
+     const wallet = await (new WalletService(user)).getBalance();
 
       response.status(201).json({
         status: 'success',
@@ -39,8 +38,7 @@ const UserController = {
     const user = request.user as User;
 
     try {
-     const handler = new WalletService(user);
-     const wallet = await handler.create();
+     const wallet = await (new WalletService(user)).create();
 
       response.status(201).json({
         status: 'success',
@@ -64,8 +62,7 @@ const UserController = {
       const user = request.user as User;
 
       try {
-        const handler = new WalletService(user);
-        const thirdPartyData = await handler.fundWallet(request.body.amount);
+        const thirdPartyData = await (new WalletService(user)).fundWallet(request.body.amount);
   
         response.status(302).json({
           status: 'success',
@@ -87,8 +84,7 @@ const UserController = {
       const reference = request.body.reference;
 
       try {
-        const handler = new WalletService(user);
-        const wallet = await handler.completeWalletFunding(reference);
+        const wallet = await (new WalletService(user)).completeWalletFunding(reference);
   
         response.status(200).json({
           status: 'success',
@@ -112,10 +108,9 @@ const UserController = {
     const user = request.user as User;
 
     try {
-      const handler = new WalletService(user);
       const recepient = request.recepient as User;
 
-      const wallet = await handler.transfer(amount, recepient);
+      const wallet = await (new WalletService(user)).transfer(amount, recepient);
 
       response.status(200).json({
         status: 'success',

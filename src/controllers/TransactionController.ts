@@ -16,10 +16,8 @@ const TransactionController = {
     const user = request.user as User;
 
     try {
-    const handler = new WalletService(user);
-    const wallet = await handler.getWallet();
-    const handle = new TransactionService(wallet);
-    const transactions = await handle.getAll();
+    const wallet = await (new WalletService(user)).getWallet();
+    const transactions = await (new TransactionService(wallet)).getAll();
 
       response.status(200).json({
         status: 'success',

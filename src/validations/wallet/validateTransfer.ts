@@ -24,8 +24,6 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
       return response.status(422).json({status: 'error', message: 'Cannot transfer to self'});
     }
 
-    const handler = new WalletService(user);
-
     try {
       const recepient = await (new UserService).getUserByEmail(recepientEmail);
 
@@ -33,11 +31,9 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
         throw new Error('Recepient is not registered');
       }
 
-      const handle = new WalletService(recepient);
-
       const [wallet, recepientWallet] = await Promise.all([
-        handler.getWallet(),
-        handle.getWallet()
+        (new WalletService(user)).getWallet(),
+        (new WalletService(recepient)).getWallet()
       ]);
 
       if (wallet.available_balance < amount) {

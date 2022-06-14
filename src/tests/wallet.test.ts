@@ -56,8 +56,7 @@ describe("Test /wallets route", () => {
         });    
 
         test("Wallet creation when user already has wallet", async () => {
-            const handler = new WalletService(authUser);
-            await handler.create();
+            await (new WalletService(authUser)).create();
 
             const response = await request(app).post("/wallets").set('Authorization', `Bearer ${token}`);
             expect(response.statusCode).toBe(403);
