@@ -21,5 +21,5 @@ export const fundWalletSchema = Joi.object().keys({
 
 export const transferSchema = Joi.object().keys({
   amount: Joi.number().required().min(0),
-  recepientEmail: Joi.string().email().required(),
+  email: Joi.string().email().required(),
 });
