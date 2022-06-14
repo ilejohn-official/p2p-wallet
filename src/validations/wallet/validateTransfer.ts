@@ -1,6 +1,7 @@
 import { Response, NextFunction } from "express";
-import {CustomRequest} from "../../middlewares";
-import { User, UserService } from "../../services/UserService";
+import { User } from "../../global/interfaces";
+import { CustomRequest } from "../../global/types";
+import { UserService } from "../../services/UserService";
 import {WalletService} from "../../services/WalletService";
 import {getErrorMessage, validateEmail} from "../../utils";
 import {transferSchema} from "../../validations/validationSchema";

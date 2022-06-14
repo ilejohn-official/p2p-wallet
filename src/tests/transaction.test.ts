@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../app";
 import db from "../../database/db.connection";
 import {hashPassword} from "../utils";
-import { User } from "../services/UserService";
+import { User } from "../global/interfaces";
 
 let token: string;
 let authUser: User;

@@ -1,8 +1,7 @@
-import { User } from "../services/UserService";
 import {BaseRepository} from "./index";
 import db from "../../database/db.connection";
-import { WalletCount, Wallet } from "../services/WalletService";
 import { TransactionRepository } from "./transaction_repository";
+import { User, Wallet, WalletCount } from "../global/interfaces";
 
 export class WalletRepository extends BaseRepository {
 

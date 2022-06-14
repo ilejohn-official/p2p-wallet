@@ -1,22 +1,8 @@
 import db from "../../database/db.connection";
 import { WalletRepository } from "../repositories/wallet_repository";
 import { TransactionRepository } from "../repositories/transaction_repository";
-import { User } from "./UserService";
 import {getErrorMessage, payViaPaystack, verifyPaystackPayment} from "../utils";
-
-
-export interface Wallet {
-    id: number,
-    user_id: User["id"],
-    available_balance: number,
-    pending_debit_balance: number,
-    pending_credit_balance: number,
-    createdAt: Date,
-    updatedAt: Date
-}
-export interface WalletCount {
- count: number | string;
-}
+import { User, Wallet, WalletCount } from "../global/interfaces";
 
 export class WalletService {
 

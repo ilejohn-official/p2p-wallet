@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
+import { User } from "../../global/interfaces";
+import { CustomRequest } from "../../global/types";
 import {WalletService} from "../../services/WalletService";
-import {CustomRequest} from "../../middlewares"
-import { User } from "../../services/UserService";
 
 export default async (request:CustomRequest, response:Response, next:NextFunction) => {
     const user = request.user as User

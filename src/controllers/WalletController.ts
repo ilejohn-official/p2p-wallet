@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { CustomRequest } from "../middlewares";
-import { User } from "../services/UserService";
+import { User } from "../global/interfaces";
+import { CustomRequest } from "../global/types";
 import {WalletService} from "../services/WalletService";
 import {getErrorMessage} from "../utils";
 

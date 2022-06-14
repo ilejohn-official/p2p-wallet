@@ -1,5 +1,4 @@
-import { Transaction } from "../services/TransactionService";
-import { Wallet } from "../services/WalletService";
+import { Transaction, Wallet } from "../global/interfaces";
 import {BaseRepository} from "./index";
 
 export class TransactionRepository extends BaseRepository {

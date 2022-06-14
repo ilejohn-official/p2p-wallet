@@ -2,16 +2,14 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import {loginSchema} from "../validations/validationSchema";
 import { Request, Response } from "express";
-import { User, UserService} from "../services/UserService";
+import { UserService} from "../services/UserService";
 import envVariables from "../config";
 import {getErrorMessage, verifyPassword} from "../utils";
 import { authenticateUser } from "../middlewares";
-import {CustomRequest} from "../middlewares";
+import { CustomRequest, UserHidden } from "../global/types";
 
 const router = express.Router();
 const { appKey } = envVariables;
-
-type UserHidden = User & {password: string}
 
 /**
  * 
@@ -23,40 +21,40 @@ router.post("/login", async (request:Request, response:Response) => {
 
     try {
 
-    let { error } = loginSchema.validate(request.body, { allowUnknown: true, abortEarly: false });
+      let { error } = loginSchema.validate(request.body, { allowUnknown: true, abortEarly: false });
 
-    if (error) {
-      throw error;
-    }
+      if (error) {
+        throw error;
+      }
 
-    const user = await (new UserService).getUserByEmail(email) as UserHidden;
+      const user = await (new UserService).getUserByEmail(email) as UserHidden;
 
-    if(!user) {
-      throw new Error('User with record not found');
-    }
+      if(!user) {
+        throw new Error('User with record not found');
+      }
 
-    const verifiedPassword = await verifyPassword(password, user.password);
-    if (!verifiedPassword) {
-      throw new Error('Password not valid');
-    }
+      const verifiedPassword = await verifyPassword(password, user.password);
+      if (!verifiedPassword) {
+        throw new Error('Password not valid');
+      }
 
-    const token = jwt.sign(
-        {
-          ...user
-        },
-        appKey,
-        { expiresIn: 120*60 }, // expires in 120 minutes
-    );
+      const token = jwt.sign(
+          {
+            ...user
+          },
+          appKey,
+          { expiresIn: 120*60 }, // expires in 120 minutes
+      );
 
-    response.status(200).json({
-        status: 'success',
-        message: 'User logged in successfully. Add token to Api request header as bearer Token to visit logged in routes',
-        data: {user, token}
-    });
+      response.status(200).json({
+          status: 'success',
+          message: 'User logged in successfully. Add token to Api request header as bearer Token to visit logged in routes',
+          data: {user, token}
+      });
         
     } catch (error) {
 
-        response.status(400).json({status: 'error', message: getErrorMessage(error)});
+       response.status(400).json({status: 'error', message: getErrorMessage(error)});
     }
 
 });
