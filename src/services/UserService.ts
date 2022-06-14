@@ -1,37 +1,30 @@
 import {hashPassword} from "../utils";
 import {UserRepository} from "../repositories/user_repository";
-export interface User {
-    name: string,
-    email: string,
-    id: number,
-    updatedAt: string,
-    createdAt: string
-}
+import { User } from "../global/interfaces";
 
 export class UserService {
 
-    private userRepository: UserRepository;
+  private userRepository: UserRepository;
 
-    constructor(){
-      this.userRepository = new UserRepository();
-    }
+  constructor(){
+    this.userRepository = new UserRepository();
+  }
 
-    async create(name:string, email:string, password:string): Promise<User> {
-      let hashedPassword = await hashPassword(password);
+  async create(name:string, email:string, password:string): Promise<User> {
+    let hashedPassword = await hashPassword(password);
 
-      const [user] = await this.userRepository.create({
-        name, email, password: hashedPassword
-      }, ['id', 'name', 'email']);
+    const [user] = await this.userRepository.create({
+      name, email, password: hashedPassword
+    }, ['id', 'name', 'email']);
 
-      return user;
-    }
+    return user;
+  }
 
-    async getUserByEmail(email: string): Promise<User> {
-      return this.userRepository.getUserByEmail(email);
-    }
+  async getUserByEmail(email: string): Promise<User> {
+    return this.userRepository.getUserByEmail(email);
+  }
 
-    async all(): Promise<User[]> {
-      return this.userRepository.all();
-    }
-
+  async all(): Promise<User[]> {
+    return this.userRepository.all();
+  }
 }

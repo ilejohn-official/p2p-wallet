@@ -1,9 +1,9 @@
 import { Response } from "express";
-import { CustomRequest } from "../middlewares";
-import { User } from "../services/UserService";
 import {WalletService} from "../services/WalletService";
 import {TransactionService} from "../services/TransactionService";
 import {getErrorMessage} from "../utils";
+import { CustomRequest } from "../global/types";
+import { User } from "../global/interfaces";
 
 const TransactionController = {
 

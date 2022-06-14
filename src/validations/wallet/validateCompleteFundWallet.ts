@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
-import {CustomRequest} from "../../middlewares";
 import db from "../../../database/db.connection";
+import { CustomRequest } from "../../global/types";
 import { TransactionService } from "../../services/TransactionService";
 import {completeWalletFundingSchema} from "../../validations/validationSchema";
 

@@ -1,4 +1,4 @@
-import { User } from "../services/UserService";
+import { User } from "../global/interfaces";
 import {BaseRepository} from "./index";
 
 export class UserRepository extends BaseRepository {

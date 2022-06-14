@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import {CustomRequest} from "../../middlewares";
+import { CustomRequest } from "../../global/types";
 import {fundWalletSchema} from "../../validations/validationSchema";
 
 export default async (request:CustomRequest, response:Response, next:NextFunction) => {
