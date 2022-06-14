@@ -1,15 +1,12 @@
 import { Response, NextFunction } from "express";
 import {CustomRequest} from "../../middlewares";
+import {fundWalletSchema} from "../../validations/validationSchema";
 
 export default async (request:CustomRequest, response:Response, next:NextFunction) => {
-    const amount = request.body.amount;
+    let { error } = fundWalletSchema.validate(request.body, { allowUnknown: true, abortEarly: false });
 
-    if (!amount) {
-      return response.status(422).json({status: 'error', message: 'Amount required'});
-    }
-    
-    if(typeof amount !== 'number' || amount < 0) {
-      return response.status(422).json({status: 'error', message: 'Invalid amount supplied. Amount must be a positive number'});
+    if (error) {
+      return response.status(422).json({status: 'error', message: error.message});
     }
 
     next();

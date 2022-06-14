@@ -35,24 +35,43 @@ describe("Test auth routes", () => {
 
         });
 
-        test("Login with invalid data", async () => {
+        test("Login with wrong data", async () => {
 
-            let password = "s-9ik&%dnwje";
+            let password = "s-9i5%rQ";
             let hashedPassword = await hashPassword(password);
             const user = { 
-                name: 'Allison Scot', 
-                email: "scot@example.com", 
+                name: 'Greg Margaret', 
+                email: "greg@example.com", 
                 password: hashedPassword
             }
 
               await db('users').insert(user);
  
-              const response = await request(app).post("/login").send({email: 'scot@example.com', password: 'wrong_password'});
+              const response = await request(app).post("/login").send({email: 'gregexample.com', password: 'wrong'});
               expect(response.statusCode).toBe(400);
               expect(response.body.status).toBe('error');
-              expect(response.body.message).toBe('Password not valid');
+              expect(response.body.message).toBe("\"email\" must be a valid email. \"password\" length must be at least 6 characters long");
 
-        });    
+        });
+        
+        test("Login with invalid data", async () => {
+
+          let password = "s-9ik&%dnwje";
+          let hashedPassword = await hashPassword(password);
+          const user = { 
+              name: 'Allison Scot', 
+              email: "scot@example.com", 
+              password: hashedPassword
+          }
+
+            await db('users').insert(user);
+
+            const response = await request(app).post("/login").send({email: 'scot@example.com', password: 'wrong_password'});
+            expect(response.statusCode).toBe(400);
+            expect(response.body.status).toBe('error');
+            expect(response.body.message).toBe('Password not valid');
+
+      });  
   });
 
   describe("Test POST /logout route", () => {
