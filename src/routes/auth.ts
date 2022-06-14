@@ -1,9 +1,10 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import {loginSchema} from "../validations/validationSchema";
 import { Request, Response } from "express";
 import { User, UserService} from "../services/UserService";
 import envVariables from "../config";
-import {getErrorMessage, verifyPassword, validateEmail} from "../utils";
+import {getErrorMessage, verifyPassword} from "../utils";
 import { authenticateUser } from "../middlewares";
 import {CustomRequest} from "../middlewares";
 
@@ -22,22 +23,24 @@ router.post("/login", async (request:Request, response:Response) => {
 
     try {
 
-     if (!validateEmail(email)) {
-      throw new Error('Email not valid'); 
-     }
+    let { error } = loginSchema.validate(request.body, { allowUnknown: true, abortEarly: false });
 
-     const user = await (new UserService).getUserByEmail(email) as UserHidden;
+    if (error) {
+      throw error;
+    }
 
-     if(!user) {
-        throw new Error('User with record not found');
-     }
+    const user = await (new UserService).getUserByEmail(email) as UserHidden;
 
-     const verifiedPassword = await verifyPassword(password, user.password);
-     if (!verifiedPassword) {
-        throw new Error('Password not valid');
-     }
+    if(!user) {
+      throw new Error('User with record not found');
+    }
 
-     const token = jwt.sign(
+    const verifiedPassword = await verifyPassword(password, user.password);
+    if (!verifiedPassword) {
+      throw new Error('Password not valid');
+    }
+
+    const token = jwt.sign(
         {
           ...user
         },
@@ -64,8 +67,6 @@ router.post("/login", async (request:Request, response:Response) => {
  */
 
 router.post("/logout", authenticateUser, (request:CustomRequest, response:Response) => {
-    const user = request.user;
-
     request.user = undefined;
 
     response.status(200).json({
@@ -75,4 +76,3 @@ router.post("/logout", authenticateUser, (request:CustomRequest, response:Respon
 });
 
 export default router;
-
