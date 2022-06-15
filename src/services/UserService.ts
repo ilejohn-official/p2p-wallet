@@ -1,10 +1,10 @@
 import {hashPassword} from "../utils";
 import {UserRepository} from "../repositories/user_repository";
-import { User } from "../global/interfaces";
+import { IUserRepository, User } from "../global/interfaces";
 
 export class UserService {
 
-  private userRepository: UserRepository;
+  private userRepository: IUserRepository;
 
   constructor(){
     this.userRepository = new UserRepository();

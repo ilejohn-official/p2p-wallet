@@ -12,12 +12,12 @@ const TransactionController = {
    * @param {CustomRequest} request 
    * @param {Response} response 
    */
-  getTransactions: async (request:CustomRequest, response:Response) => {
-    const user = request.user as User;
+  getTransactions: async (request:CustomRequest, response:Response): Promise<void> => {
+      const user = request.user as User;
 
     try {
-    const wallet = await (new WalletService(user)).getWallet();
-    const transactions = await (new TransactionService(wallet)).getAll();
+      const wallet = await (new WalletService(user)).getWallet();
+      const transactions = await (new TransactionService(wallet)).getAll();
 
       response.status(200).json({
         status: 'success',

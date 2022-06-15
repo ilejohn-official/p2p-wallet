@@ -91,7 +91,7 @@ This p2p wallet system is a simple api showing how a wallet system can operate w
   npm run serve
   ```
 
-  Visit http://localhost:5000 and you should see 'p2p-wallet is Online!' as response. if you specify `APP_NAME` in your .env file then it should show instead of `p2p-wallet`
+  Visit http://localhost:5000 and you should see 'p2p-wallet is Online!' as response. if you specify a value for `APP_NAME` in your .env file then you should see `<APP_NAME> is Online!` where `APP_NAME` is the value specified.
 
 - To run production build
 

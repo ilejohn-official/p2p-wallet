@@ -1,19 +1,19 @@
-import { Transaction, Wallet } from "../global/interfaces";
+import { ITransactionRepository, Transaction, Wallet } from "../global/interfaces";
 import { TransactionRepository } from "../repositories/transaction_repository";
 
 export class TransactionService {
-
-  static table:string = "transactions";
-  wallet: Wallet;
   
-  private transactionRepository: TransactionRepository;
+  private transactionRepository: ITransactionRepository;
 
-  constructor(wallet: Wallet){
+  constructor(private wallet: Wallet){
    this.transactionRepository = new TransactionRepository()
-   this.wallet = wallet;
   }
 
   getAll(): Promise<Transaction[]> {
    return this.transactionRepository.getTransactionsByWalletId(this.wallet.id);
+  }
+
+  static getOneByRef(reference: string): Promise<Transaction> {
+    return TransactionRepository.getTransactionByReference(reference);
   }
 }

@@ -6,14 +6,10 @@ import { User, Wallet, WalletCount } from "../global/interfaces";
 
 export class WalletService {
 
-    static table:string = "wallets";
-    user: User;
-
     private walletRepository: WalletRepository;
 
-    constructor(user: User){
+    constructor(private user: User){
      this.walletRepository = new WalletRepository();
-     this.user = user;
     }
 
     async getBalance(): Promise<Partial<Wallet>> {

@@ -6,10 +6,10 @@ const UserController = {
 
   /**
    *  Retrieve all users
-   * @param {Request} request 
+   * @param {Request} _request 
    * @param  {Response} response 
    */
-  allUsers: async (request:Request, response:Response)=> {
+  allUsers: async (_request:Request, response:Response): Promise<void> => {
     try {
       const users = await (new UserService).all();
 
@@ -31,7 +31,7 @@ const UserController = {
     * @param  {Response} response 
     */
   
-  create: async (request:Request, response:Response) => {
+  create: async (request:Request, response:Response): Promise<void> => {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;

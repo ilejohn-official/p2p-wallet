@@ -15,7 +15,7 @@ const { appKey } = envVariables;
  * 
  * Login
  */
-router.post("/login", async (request:Request, response:Response) => {
+router.post("/login", async (request:Request, response:Response): Promise<void> => {
     const email = request.body.email;
     const password = request.body.password;
 
@@ -64,7 +64,7 @@ router.post("/login", async (request:Request, response:Response) => {
  * 
  */
 
-router.post("/logout", authenticateUser, (request:CustomRequest, response:Response) => {
+router.post("/logout", authenticateUser, (request:CustomRequest, response:Response): void => {
     request.user = undefined;
 
     response.status(200).json({
