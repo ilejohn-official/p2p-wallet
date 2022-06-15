@@ -1,3 +1,5 @@
+import { Knex } from "knex";
+
 interface Timestamp {
   updatedAt: string,
   createdAt: string
@@ -32,3 +34,28 @@ export interface Transaction extends Timestamp {
     meta?: JSON | string | null
 }
 
+export interface ITransactionRepository extends IBaseRepository {
+    getTransactionsByWalletId(wallet_id:Wallet["id"]): Promise<Transaction[]>,
+    updateByRefAndWalletId(data: any, wallet_id: Wallet["id"], reference: string): Promise<void>
+}
+
+export interface IUserRepository extends IBaseRepository {
+    getUserByEmail(email: string): Promise<User>
+}
+
+export interface IWalletRepository extends IBaseRepository {
+    getWalletByUserId(user_id: User["id"]): Promise<Wallet[]>,
+    hasWallet(user_id: User["id"]): Promise<WalletCount>,
+    fundWalletOperation(wallet_id: Wallet["id"], reference: string, amount: number, updateData: any): Promise<void>,
+    walletTransferOperation(
+        walletId: Wallet["id"], 
+        senderName: User["name"], 
+        recepientWalletId: Wallet["id"], 
+        amount: number
+    ): Promise<void>
+}
+
+export interface IBaseRepository {
+    all(): Knex.QueryBuilder ,
+    create(data: any, returning: string[], options?: any): Knex.QueryBuilder
+}

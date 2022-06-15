@@ -1,9 +1,9 @@
 import {BaseRepository} from "./index";
 import db from "../../database/db.connection";
 import { TransactionRepository } from "./transaction_repository";
-import { User, Wallet, WalletCount } from "../global/interfaces";
+import { IWalletRepository, User, Wallet, WalletCount } from "../global/interfaces";
 
-export class WalletRepository extends BaseRepository {
+export class WalletRepository extends BaseRepository implements IWalletRepository {
 
     static table:string = "wallets";
 

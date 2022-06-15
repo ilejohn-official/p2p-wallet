@@ -1,7 +1,7 @@
-import { User } from "../global/interfaces";
+import { IUserRepository, User } from "../global/interfaces";
 import {BaseRepository} from "./index";
 
-export class UserRepository extends BaseRepository {
+export class UserRepository extends BaseRepository implements IUserRepository {
 
     static table:string = "users";
 

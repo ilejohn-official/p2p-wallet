@@ -1,7 +1,8 @@
-import { Transaction, Wallet } from "../global/interfaces";
+import db from "../../database/db.connection";
+import { ITransactionRepository, Transaction, Wallet } from "../global/interfaces";
 import {BaseRepository} from "./index";
 
-export class TransactionRepository extends BaseRepository {
+export class TransactionRepository extends BaseRepository implements ITransactionRepository {
 
     static table:string = "transactions";
 
@@ -20,6 +21,10 @@ export class TransactionRepository extends BaseRepository {
         this.queryBuilder.where('wallet_id', wallet_id)
             .whereJsonPath('meta', '$.paystack_reference', '=', reference)
             .update(data);
+    }
+
+    static async getTransactionByReference(reference: string): Promise<Transaction> {
+        return db(this.table).whereJsonPath('meta', '$.paystack_reference', '=', reference).first();
     }
 
 };

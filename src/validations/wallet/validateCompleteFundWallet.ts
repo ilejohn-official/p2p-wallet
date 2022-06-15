@@ -1,5 +1,4 @@
 import { Response, NextFunction } from "express";
-import db from "../../../database/db.connection";
 import { CustomRequest } from "../../global/types";
 import { TransactionService } from "../../services/TransactionService";
 import {completeWalletFundingSchema} from "../../validations/validationSchema";
@@ -11,8 +10,8 @@ export default async(request:CustomRequest, response:Response, next:NextFunction
       return response.status(422).json({status: 'error', message: error.message});
     }
 
-    const transaction = await db(TransactionService.table).whereJsonPath('meta', '$.paystack_reference', '=', request.body.reference).first();
-
+    const transaction = await TransactionService.getOneByRef(request.body.reference);
+    
     if (transaction.status === 'SUCCESS') {
       return response.status(400).json({status: 'error', message: 'Transaction completed already'});
     }
